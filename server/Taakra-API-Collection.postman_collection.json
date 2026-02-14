@@ -1,0 +1,621 @@
+{
+  "info": {
+    "_postman_id": "taakra-backend-testing",
+    "name": "Taakra Backend Testing",
+    "description": "Complete API testing collection for Taakra Competition Platform Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12345"
+  },
+  "item": [
+    {
+      "name": "🏥 Health & Status",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/health",
+              "host": ["{{BASE_URL}}", "health"],
+              "variable": [
+                {
+                  "key": "BASE_URL",
+                  "value": "http://localhost:5000/api"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📚 Categories",
+      "item": [
+        {
+          "name": "Create Category - Programming",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"name\": \"Programming\",\\n  \"description\": \"Coding and software development competitions\",\\n  \"icon\": \"💻\",\\n  \"color\": \"#3B82F6\"\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/categories",
+              "host": ["{{BASE_URL}}", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Create Category - Design",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"name\": \"Design\",\\n  \"description\": \"UI/UX and graphic design competitions\",\\n  \"icon\": \"🎨\",\\n  \"color\": \"#EC4899\"\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/categories",
+              "host": ["{{BASE_URL}}", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/categories",
+              "host": ["{{BASE_URL}}", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Get Category by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/categories/{{CATEGORY_ID}}",
+              "host": ["{{BASE_URL}}", "categories", "{{CATEGORY_ID}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏆 Competitions",
+      "item": [
+        {
+          "name": "Create Competition 1 - Web Dev",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"title\": \"Web Development Challenge 2026\",\\n  \"description\": \"Build a responsive web application using React, Node.js, and MongoDB. Create a full-stack app with authentication, CRUD operations, and real-time features.\",\\n  \"summary\": \"Full-stack web development challenge - React + Node.js\",\\n  \"category\": \"{{PROGRAMMING_CATEGORY_ID}}\",\\n  \"rules\": [\\n    \"Use only JavaScript frameworks\",\\n    \"Must include user authentication\",\\n    \"Deployment on any cloud platform\"\\n  ],\\n  \"prizes\": [\\n    {\\n      \"place\": \"1st\",\\n      \"amount\": \"$5000\",\\n      \"description\": \"Winner prize\"\\n    },\\n    {\\n      \"place\": \"2nd\",\\n      \"amount\": \"$3000\",\\n      \"description\": \"Runner-up prize\"\\n    }\\n  ],\\n  \"startDate\": \"2026-03-01T10:00:00Z\",\\n  \"endDate\": \"2026-03-10T10:00:00Z\",\\n  \"registrationDeadline\": \"2026-02-28T23:59:59Z\",\\n  \"maxRegistrations\": 100,\\n  \"image\": \"https://via.placeholder.com/400x300?text=Web+Dev\",\\n  \"tags\": [\"web\", \"javascript\", \"fullstack\"],\\n  \"location\": \"online\"\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/competitions",
+              "host": ["{{BASE_URL}}", "competitions"]
+            }
+          }
+        },
+        {
+          "name": "Create Competition 2 - UI/UX",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"title\": \"UI/UX Design Marathon\",\\n  \"description\": \"Design a complete user interface for a mobile app. Focus on user experience, visual hierarchy, and accessibility.\",\\n  \"summary\": \"Mobile app UI/UX design challenge\",\\n  \"category\": \"{{DESIGN_CATEGORY_ID}}\",\\n  \"rules\": [\\n    \"Use Figma or Adobe XD\",\\n    \"Mobile-first approach\",\\n    \"Include design rationale\"\\n  ],\\n  \"prizes\": [\\n    {\\n      \"place\": \"1st\",\\n      \"amount\": \"$2000\",\\n      \"description\": \"Grand prize\"\\n    }\\n  ],\\n  \"startDate\": \"2026-03-15T10:00:00Z\",\\n  \"endDate\": \"2026-03-25T10:00:00Z\",\\n  \"registrationDeadline\": \"2026-03-14T23:59:59Z\",\\n  \"maxRegistrations\": 50,\\n  \"tags\": [\"design\", \"ui\", \"ux\"],\\n  \"location\": \"online\"\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/competitions",
+              "host": ["{{BASE_URL}}", "competitions"]
+            }
+          }
+        },
+        {
+          "name": "Get All Competitions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/competitions",
+              "host": ["{{BASE_URL}}", "competitions"]
+            }
+          }
+        },
+        {
+          "name": "Get Competition by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/competitions/{{COMPETITION_ID}}",
+              "host": ["{{BASE_URL}}", "competitions", "{{COMPETITION_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Publish Competition",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"status\": \"published\"\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/competitions/{{COMPETITION_ID}}/status",
+              "host": ["{{BASE_URL}}", "competitions", "{{COMPETITION_ID}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Get Trending Competitions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/competitions/trending",
+              "host": ["{{BASE_URL}}", "competitions", "trending"]
+            }
+          }
+        },
+        {
+          "name": "Get Upcoming Competitions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/competitions/upcoming",
+              "host": ["{{BASE_URL}}", "competitions", "upcoming"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 Registrations",
+      "item": [
+        {
+          "name": "Create Registration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"competitionId\": \"{{COMPETITION_ID}}\",\\n  \"teamMembers\": [\\n    {\\n      \"name\": \"John Doe\",\\n      \"email\": \"john@example.com\",\\n      \"phone\": \"123-456-7890\"\\n    },\\n    {\\n      \"name\": \"Jane Smith\",\\n      \"email\": \"jane@example.com\",\\n      \"phone\": \"098-765-4321\"\\n    }\\n  ],\\n  \"notes\": \"We are excited to participate!\"\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/registrations",
+              "host": ["{{BASE_URL}}", "registrations"]
+            }
+          }
+        },
+        {
+          "name": "Get My Registrations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/registrations/my-registrations",
+              "host": ["{{BASE_URL}}", "registrations", "my-registrations"]
+            }
+          }
+        },
+        {
+          "name": "Get Registration by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/registrations/{{REGISTRATION_ID}}",
+              "host": ["{{BASE_URL}}", "registrations", "{{REGISTRATION_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Confirm Registration (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/registrations/{{REGISTRATION_ID}}/confirm",
+              "host": ["{{BASE_URL}}", "registrations", "{{REGISTRATION_ID}}", "confirm"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Registration",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"reason\": \"Changed my mind\"\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/registrations/{{REGISTRATION_ID}}/cancel",
+              "host": ["{{BASE_URL}}", "registrations", "{{REGISTRATION_ID}}", "cancel"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Chat",
+      "item": [
+        {
+          "name": "Initialize Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/chats/initiate",
+              "host": ["{{BASE_URL}}", "chats", "initiate"]
+            }
+          }
+        },
+        {
+          "name": "Get My Chat",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/chats/my-chat",
+              "host": ["{{BASE_URL}}", "chats", "my-chat"]
+            }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"content\": \"Hello! I need help with the registration process.\",\\n  \"attachments\": []\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/chats/{{CHAT_ID}}/messages",
+              "host": ["{{BASE_URL}}", "chats", "{{CHAT_ID}}", "messages"]
+            }
+          }
+        },
+        {
+          "name": "Get Messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/chats/{{CHAT_ID}}/messages",
+              "host": ["{{BASE_URL}}", "chats", "{{CHAT_ID}}", "messages"]
+            }
+          }
+        },
+        {
+          "name": "Mark Messages as Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"messageIds\": [\"{{MESSAGE_ID}}\"]\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/chats/{{CHAT_ID}}/mark-read",
+              "host": ["{{BASE_URL}}", "chats", "{{CHAT_ID}}", "mark-read"]
+            }
+          }
+        },
+        {
+          "name": "Close Chat",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/chats/{{CHAT_ID}}/close",
+              "host": ["{{BASE_URL}}", "chats", "{{CHAT_ID}}", "close"]
+            }
+          }
+        },
+        {
+          "name": "Get All Chats (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/chats/admin/all",
+              "host": ["{{BASE_URL}}", "chats", "admin", "all"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/users",
+              "host": ["{{BASE_URL}}", "users"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/users/{{USER_ID}}",
+              "host": ["{{BASE_URL}}", "users", "{{USER_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Get User Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/users/{{USER_ID}}/stats",
+              "host": ["{{BASE_URL}}", "users", "{{USER_ID}}", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Search Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/users/search?query=Test",
+              "host": ["{{BASE_URL}}", "users", "search"],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "Test"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Admin Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/admin/dashboard/stats",
+              "host": ["{{BASE_URL}}", "admin", "dashboard", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Dashboard Charts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/admin/dashboard/charts",
+              "host": ["{{BASE_URL}}", "admin", "dashboard", "charts"]
+            }
+          }
+        },
+        {
+          "name": "Get All Users (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/admin/users",
+              "host": ["{{BASE_URL}}", "admin", "users"]
+            }
+          }
+        },
+        {
+          "name": "Get Admin User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/admin/users/{{USER_ID}}",
+              "host": ["{{BASE_URL}}", "admin", "users", "{{USER_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Toggle User Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/admin/users/{{USER_ID}}/toggle-status",
+              "host": ["{{BASE_URL}}", "admin", "users", "{{USER_ID}}", "toggle-status"]
+            }
+          }
+        },
+        {
+          "name": "Get All Registrations (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/admin/registrations/all",
+              "host": ["{{BASE_URL}}", "admin", "registrations", "all"]
+            }
+          }
+        },
+        {
+          "name": "Get Pending Registrations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/admin/registrations/pending",
+              "host": ["{{BASE_URL}}", "admin", "registrations", "pending"]
+            }
+          }
+        },
+        {
+          "name": "Get Competition Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/admin/competitions/stats",
+              "host": ["{{BASE_URL}}", "admin", "competitions", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Broadcast Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"title\": \"New Competition Alert\",\\n  \"message\": \"Check out our latest Web Development Challenge!\",\\n  \"type\": \"admin_announcement\"\\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/admin/notifications/broadcast",
+              "host": ["{{BASE_URL}}", "admin", "notifications", "broadcast"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "CATEGORY_ID",
+      "value": "PASTE_CATEGORY_ID_HERE"
+    },
+    {
+      "key": "COMPETITION_ID",
+      "value": "PASTE_COMPETITION_ID_HERE"
+    },
+    {
+      "key": "USER_ID",
+      "value": "PASTE_USER_ID_HERE"
+    },
+    {
+      "key": "REGISTRATION_ID",
+      "value": "PASTE_REGISTRATION_ID_HERE"
+    },
+    {
+      "key": "CHAT_ID",
+      "value": "PASTE_CHAT_ID_HERE"
+    },
+    {
+      "key": "MESSAGE_ID",
+      "value": "PASTE_MESSAGE_ID_HERE"
+    }
+  ]
+}

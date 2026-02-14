@@ -69,7 +69,12 @@ const competitionSchema = new mongoose.Schema({
     type: Number, 
     default: 0,
     min: 0,
-    max: function() { return this.maxRegistrations; }
+    validate: {
+      validator: function(v) {
+        return v <= this.maxRegistrations;
+      },
+      message: 'Current registrations cannot exceed max registrations'
+    }
   },
   status: { 
     type: String, 
