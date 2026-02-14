@@ -5,31 +5,38 @@ import { Table } from '../common/Table';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { FiPlus, FiTrash2, FiEdit2 } from 'react-icons/fi';
+import { adminService } from '../../services/admin';
 
 export const ManageUsers = ({ filterRole = null }) => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem('users_data');
-    if (stored) {
-      const allUsers = JSON.parse(stored);
-      if (filterRole) {
-        setUsers(allUsers.filter(u => u.role === filterRole));
-      } else {
-        setUsers(allUsers);
+    const fetchUsers = async () => {
+      try {
+        const response = await adminService.getAllUsers();
+        let allUsers = response.data;
+        if (filterRole) {
+          setUsers(allUsers.filter(u => u.role.toUpperCase() === filterRole.toUpperCase()));
+        } else {
+          setUsers(allUsers);
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
       }
-    } else {
-      setUsers([]);
-    }
+    };
+    fetchUsers();
   }, [filterRole]);
 
   /* Removed Modal Logic */
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Delete user?')) {
-      const updated = users.filter(u => u.id !== id);
-      setUsers(updated);
-      localStorage.setItem('users_data', JSON.stringify(updated));
+      try {
+        await adminService.deleteUser(id);
+        setUsers(users.filter(u => u._id !== id));
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
     }
   };
 

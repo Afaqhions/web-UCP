@@ -35,6 +35,16 @@ const chatHandler = require('./sockets/chatHandler');
 
 // Initialize Express app
 const app = express();
+
+// ⭐ LOG ALL REQUESTS AT THE ENTRY POINT
+app.use((req, res, next) => {
+  console.log(`\n📨 [${new Date().toISOString()}] ${req.method} ${req.url}`);
+  if (req.headers.authorization) {
+    console.log(`🔑 Auth Header present: ${req.headers.authorization.substring(0, 20)}...`);
+  }
+  next();
+});
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -44,19 +54,23 @@ const io = new Server(server, {
 });
 
 // ⭐ HEALTH CHECK - FIRST ROUTE (NO MIDDLEWARE)
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  const User = require('./models/User');
+  const count = await User.countDocuments();
   res.status(200).json({
     success: true,
     message: 'Server is running',
+    userCount: count,
     timestamp: new Date(),
   });
 });
 
 // Middleware
 app.use(cors({
-  origin: process.env.VITE_API_URL || 'http://localhost:3000',
+  origin: true, // Allow all origins and reflect back the requester origin
   credentials: true,
 }));
+app.use(clerkMiddleware());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 

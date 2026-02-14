@@ -5,26 +5,60 @@ const User = require('../models/User');
 const emailService = require('../services/emailService');
 
 exports.syncClerkUser = catchAsync(async (req, res, next) => {
-  const { id, email_addresses, first_name, last_name, image_url } = req.body.data;
+  console.log('🔄 syncClerkUser called with body keys:', Object.keys(req.body));
+  const data = req.body.data || req.body;
+  const { id } = data;
+
+  console.log('🆔 Syncing user with Clerk ID:', id);
+
+  // Extract fields whether they come from Clerk webhook or direct Clerk User object
+  const email = data.email_addresses ? data.email_addresses[0].email_address : (data.primaryEmailAddress ? data.primaryEmailAddress.emailAddress : (data.emailAddress || data.email));
+  const firstName = data.first_name || data.firstName || '';
+  const lastName = data.last_name || data.lastName || '';
+  const imageUrl = data.image_url || data.imageUrl || data.profilePicture;
+
+  console.log('📧 Extracted email:', email);
 
   try {
-    // Check if user already exists
-    let user = await User.findOne({ clerkId: id });
+    // Check if user already exists (Prioritize clerkId, fallback to email)
+    let user = await User.findOne({
+      $or: [
+        { clerkId: id },
+        { email: email }
+      ]
+    });
 
     if (!user) {
+      console.log('🆕 User not found in DB, creating new user...');
+
+      // Auto-assign admin role for specific emails
+      const isAdminEmail = email === 'm.afaqpak@gmail.com';
+
       // Create new user from Clerk data
       user = await User.create({
         clerkId: id,
-        email: email_addresses[0].email_address,
-        name: `${first_name} ${last_name}`.trim() || 'User',
-        profilePicture: image_url || 'default-avatar.png',
-        role: 'user',
-        emailVerified: true, // Clerk handles verification
+        email: email,
+        name: `${firstName} ${lastName}`.trim() || 'User',
+        profilePicture: imageUrl || 'default-avatar.png',
+        role: isAdminEmail ? 'admin' : 'user',
+        emailVerified: true,
         isActive: true,
       });
+      console.log('✅ User created successfully in MongoDB:', user._id);
 
-      // Send welcome email
-      await emailService.sendWelcomeEmail(user.email, user.name);
+      try {
+        await emailService.sendWelcomeEmail(user.email, user.name);
+      } catch (err) {
+        console.error('Welcome email failed:', err);
+      }
+    } else {
+      console.log('✨ User already exists in DB:', user._id);
+      // Promote existing user if they are in the whitelist
+      if (email === 'm.afaqpak@gmail.com' && user.role !== 'admin') {
+        user.role = 'admin';
+        await user.save();
+        console.log('👷 Existing user promoted to Admin');
+      }
     }
 
     res.status(201).json({

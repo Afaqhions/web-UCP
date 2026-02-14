@@ -4,6 +4,7 @@ import { Button } from '../../components/common/Button';
 
 import { Input } from '../../components/common/Input';
 import { FiArrowLeft, FiSave } from 'react-icons/fi';
+import { adminService } from '../../services/admin';
 
 const CreatePrizePoolPage = () => {
     const navigate = useNavigate();
@@ -19,38 +20,52 @@ const CreatePrizePoolPage = () => {
 
     useEffect(() => {
         if (isEditMode) {
-            const stored = JSON.parse(localStorage.getItem('prizepools_data')) || [];
-            const found = stored.find(p => p.id === Number(id));
-            if (found) {
-                setFormData({ ...found });
-            } else {
-                navigate('/admin');
-            }
+            const fetchPool = async () => {
+                try {
+                    const response = await adminService.getPrizePools();
+                    const found = response.data.find(p => p._id === id);
+                    if (found) {
+                        setFormData({
+                            name: found.name,
+                            amount: found.amount,
+                            sponsor: found.sponsor,
+                            status: found.status
+                        });
+                    } else {
+                        navigate('/admin');
+                    }
+                } catch (error) {
+                    console.error('Error fetching prize pool:', error);
+                    navigate('/admin');
+                }
+            };
+            fetchPool();
         }
     }, [id, isEditMode, navigate]);
 
     const handleBack = () => {
-        navigate('/admin', { state: { activeTab: 4 } });
+        navigate('/admin', { state: { activeTab: 5 } });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const existing = JSON.parse(localStorage.getItem('prizepools_data')) || [];
-
-        if (isEditMode) {
-            const updated = existing.map(p => p.id === Number(id) ? { ...p, ...formData, amount: Number(formData.amount) } : p);
-            localStorage.setItem('prizepools_data', JSON.stringify(updated));
-        } else {
-            const newItem = {
-                id: Date.now(),
+        try {
+            const data = {
                 ...formData,
                 amount: Number(formData.amount)
             };
-            localStorage.setItem('prizepools_data', JSON.stringify([...existing, newItem]));
-        }
 
-        navigate('/admin', { state: { activeTab: 4 } });
+            if (isEditMode) {
+                await adminService.updatePrizePool(id, data);
+            } else {
+                await adminService.createPrizePool(data);
+            }
+            navigate('/admin', { state: { activeTab: 5 } });
+        } catch (error) {
+            console.error('Error saving prize pool:', error);
+            alert('Failed to save prize pool');
+        }
     };
 
     return (

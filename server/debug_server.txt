@@ -1,0 +1,109 @@
+node : node:internal/modules
+/cjs/loader:1424
+At line:1 char:1
++ node server.js 2>&1 | 
+Out-File -FilePath 
+"debug_server.txt" 
+-Encoding ...
++ ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (node:  
+  internal/modules/cjs/lo   
+ ader:1424:String) [], R    
+emoteException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+  throw err;
+  ^
+
+Error: Cannot find module 
+'./debug'
+Require stack:
+- C:\Users\ABT\OneDrive\Desk
+top\webucp\server\node_modul
+es\debug\src\node.js
+- C:\Users\ABT\OneDrive\Desk
+top\webucp\server\node_modul
+es\debug\src\index.js
+- C:\Users\ABT\OneDrive\Desk
+top\webucp\server\node_modul
+es\finalhandler\index.js
+- C:\Users\ABT\OneDrive\Desk
+top\webucp\server\node_modul
+es\express\lib\application.j
+s
+- C:\Users\ABT\OneDrive\Desk
+top\webucp\server\node_modul
+es\express\lib\express.js
+- C:\Users\ABT\OneDrive\Desk
+top\webucp\server\node_modul
+es\express\index.js
+- C:\Users\ABT\OneDrive\Desk
+top\webucp\server\server.js
+    at 
+Module._resolveFilename (nod
+e:internal/modules/cjs/loade
+r:1421:15)
+    at defaultResolveImpl (n
+ode:internal/modules/cjs/loa
+der:1059:19)
+    at 
+resolveForCJSWithHooks (node
+:internal/modules/cjs/loader
+:1064:22)
+    at Module._load (node:in
+ternal/modules/cjs/loader:12
+27:37)
+    at 
+TracingChannel.traceSync (no
+de:diagnostics_channel:328:1
+4)
+    at wrapModuleLoad (node:
+internal/modules/cjs/loader:
+245:24)
+    at Module.require (node:
+internal/modules/cjs/loader:
+1504:12)
+    at require (node:interna
+l/modules/helpers:152:16)
+    at Object.<anonymous> (C
+:\Users\ABT\OneDrive\Desktop
+\webucp\server\node_modules\
+debug\src\node.js:14:28)
+    at Module._compile (node
+:internal/modules/cjs/loader
+:1761:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\ABT\\OneDriv
+e\\Desktop\\webucp\\server\\
+node_modules\\debug\\src\\no
+de.js',
+    'C:\\Users\\ABT\\OneDriv
+e\\Desktop\\webucp\\server\\
+node_modules\\debug\\src\\in
+dex.js',
+    'C:\\Users\\ABT\\OneDriv
+e\\Desktop\\webucp\\server\\
+node_modules\\finalhandler\\
+index.js',
+    'C:\\Users\\ABT\\OneDriv
+e\\Desktop\\webucp\\server\\
+node_modules\\express\\lib\\
+application.js',
+    'C:\\Users\\ABT\\OneDriv
+e\\Desktop\\webucp\\server\\
+node_modules\\express\\lib\\
+express.js',
+    'C:\\Users\\ABT\\OneDriv
+e\\Desktop\\webucp\\server\\
+node_modules\\express\\index
+.js',
+    'C:\\Users\\ABT\\OneDriv
+e\\Desktop\\webucp\\server\\
+server.js'
+  ]
+}
+
+Node.js v24.13.0

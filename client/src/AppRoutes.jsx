@@ -17,14 +17,18 @@ import CreateUserPage from './pages/admin/CreateUserPage';
 import CreatePrizePoolPage from './pages/admin/CreatePrizePoolPage';
 
 export const AppRoutes = () => {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, isSignedIn, isAdmin } = useAuth();
+
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', color: 'rgba(255,255,255,0.7)', fontSize: '1.1rem', fontWeight: 500 }}>
-        <span className="animate-pulse">Loading...</span>
+        <span className="animate-pulse">Authorizing Session...</span>
       </div>
     );
   }
+
+  // If we are signed in with Clerk but waiting for backend user object
+  const isSyncing = isSignedIn && !user;
 
   return (
     <Routes>
@@ -36,27 +40,27 @@ export const AppRoutes = () => {
       {/* Auth Routes */}
       <Route
         path="/login"
-        element={!user ? <LoginPage /> : <Navigate to="/dashboard" />}
+        element={!isSignedIn ? <LoginPage /> : <Navigate to={isAdmin() ? "/admin" : "/dashboard"} />}
       />
       <Route
         path="/signup"
-        element={!user ? <SignupPage /> : <Navigate to="/dashboard" />}
+        element={!isSignedIn ? <SignupPage /> : <Navigate to={isAdmin() ? "/admin" : "/dashboard"} />}
       />
 
       {/* Protected User Routes */}
       <Route
         path="/dashboard"
-        element={user ? <DashboardPage /> : <Navigate to="/login" />}
+        element={isSignedIn ? (isAdmin() ? <Navigate to="/admin" /> : <DashboardPage />) : <Navigate to="/login" />}
       />
       <Route
         path="/profile"
-        element={user ? <ProfilePage /> : <Navigate to="/login" />}
+        element={isSignedIn ? <ProfilePage /> : <Navigate to="/login" />}
       />
 
       {/* Protected Admin Routes */}
       <Route
         path="/admin"
-        element={user && isAdmin() ? <AdminDashboardPage /> : <Navigate to="/dashboard" />}
+        element={isSignedIn && isAdmin() ? <AdminDashboardPage /> : <Navigate to="/dashboard" />}
       />
       <Route
         path="/admin/competitions/new"

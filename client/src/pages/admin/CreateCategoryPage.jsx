@@ -5,6 +5,7 @@ import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
 
 import { FiArrowLeft, FiSave } from 'react-icons/fi';
+import { adminService } from '../../services/admin';
 
 const CreateCategoryPage = () => {
     const navigate = useNavigate();
@@ -18,13 +19,21 @@ const CreateCategoryPage = () => {
 
     useEffect(() => {
         if (isEditMode) {
-            const stored = JSON.parse(localStorage.getItem('categories_data')) || [];
-            const found = stored.find(c => c.id === Number(id));
-            if (found) {
-                setFormData({ name: found.name, icon: found.icon });
-            } else {
-                navigate('/admin');
-            }
+            const fetchCategory = async () => {
+                try {
+                    const response = await adminService.getCategories();
+                    const found = response.data.find(c => c._id === id);
+                    if (found) {
+                        setFormData({ name: found.name, icon: found.icon });
+                    } else {
+                        navigate('/admin');
+                    }
+                } catch (error) {
+                    console.error('Error fetching category:', error);
+                    navigate('/admin');
+                }
+            };
+            fetchCategory();
         }
     }, [id, isEditMode, navigate]);
 
@@ -32,24 +41,20 @@ const CreateCategoryPage = () => {
         navigate('/admin', { state: { activeTab: 2 } });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const existing = JSON.parse(localStorage.getItem('categories_data')) || [];
-
-        if (isEditMode) {
-            const updated = existing.map(c => c.id === Number(id) ? { ...c, ...formData } : c);
-            localStorage.setItem('categories_data', JSON.stringify(updated));
-        } else {
-            const newItem = {
-                id: Date.now(),
-                count: 0, // Default for new
-                ...formData
-            };
-            localStorage.setItem('categories_data', JSON.stringify([...existing, newItem]));
+        try {
+            if (isEditMode) {
+                await adminService.updateCategory(id, formData);
+            } else {
+                await adminService.createCategory(formData);
+            }
+            navigate('/admin', { state: { activeTab: 2 } });
+        } catch (error) {
+            console.error('Error saving category:', error);
+            alert('Failed to save category');
         }
-
-        navigate('/admin', { state: { activeTab: 2 } });
     };
 
     return (

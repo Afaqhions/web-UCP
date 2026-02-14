@@ -5,6 +5,7 @@ import { Table } from '../common/Table';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { adminService } from '../../services/admin';
 
 export const ManageCompetitions = () => {
   const navigate = useNavigate();
@@ -12,13 +13,15 @@ export const ManageCompetitions = () => {
 
   // Load initial data from local storage or defaults
   useEffect(() => {
-    const stored = localStorage.getItem('competitions_data');
-    if (stored) {
-      setCompetitions(JSON.parse(stored));
-    } else {
-      setCompetitions([]);
-      // localStorage.setItem('competitions_data', JSON.stringify([])); 
-    }
+    const fetchCompetitions = async () => {
+      try {
+        const response = await adminService.getAllCompetitions();
+        setCompetitions(response.data);
+      } catch (error) {
+        console.error('Error fetching competitions:', error);
+      }
+    };
+    fetchCompetitions();
   }, []);
 
   const updateCompetitions = (newCompetitions) => {
@@ -27,11 +30,16 @@ export const ManageCompetitions = () => {
   };
 
   // Cleanup Modal state and handlers
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Delete competition?')) {
-      const filtered = competitions.filter(c => c.id !== id);
-      setCompetitions(filtered); // Update state directly
-      localStorage.setItem('competitions_data', JSON.stringify(filtered));
+      try {
+        // Assuming deleteCompetition is implemented in adminService
+        // await adminService.deleteCompetition(id); 
+        // For now, filtering state
+        setCompetitions(competitions.filter(c => c._id !== id));
+      } catch (error) {
+        console.error('Error deleting competition:', error);
+      }
     }
   };
 

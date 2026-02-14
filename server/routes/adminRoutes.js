@@ -17,13 +17,26 @@ router.get('/users/:id', protect, isAdmin, adminController.getUserById);
 router.get('/registrations/all', protect, isAdmin, adminController.getAllRegistrations);
 router.get('/registrations/pending', protect, isAdmin, adminController.getPendingRegistrations);
 
-// Competition stats
+// Competition management
+router.get('/competitions', protect, isAdmin, adminController.getAllCompetitions);
 router.get('/competitions/stats', protect, isAdmin, adminController.getCompetitionStats);
+
+// Category management
+router.get('/categories', protect, isAdmin, adminController.getAllCategories);
+router.post('/categories', protect, isAdmin, adminController.createCategory);
+router.put('/categories/:id', protect, isAdmin, adminController.updateCategory);
+router.delete('/categories/:id', protect, isAdmin, adminController.deleteCategory);
 
 // Notifications
 router.post('/notifications/broadcast', protect, isAdmin, adminController.broadcastNotification);
 
 // Support
 router.post('/chats/:chatId/message', protect, isAdmin, adminController.sendSupportMessage);
+
+// Prize pools
+router.get('/prizepools', protect, isAdmin, adminController.getAllPrizePools);
+router.post('/prizepools', protect, isAdmin, adminController.createPrizePool);
+router.put('/prizepools/:id', protect, isAdmin, adminController.updatePrizePool);
+router.delete('/prizepools/:id', protect, isAdmin, adminController.deletePrizePool);
 
 module.exports = router;

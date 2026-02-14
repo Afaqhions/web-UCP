@@ -6,7 +6,7 @@ import { Button } from '../common/Button';
 import { Dropdown } from '../common/Dropdown';
 
 export const Header = () => {
-  const { user, isLoggedIn, logout, isAdmin } = useAuth();
+  const { user, clerkUser, isSignedIn, loading, logout, isAdmin } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -83,7 +83,7 @@ export const Header = () => {
           style={{ gap: '2.5rem' }}
         >
           <NavLink to="/competitions">EVENTS</NavLink>
-          {isLoggedIn() && (
+          {isSignedIn && (
             <>
               <NavLink to="/dashboard">DASHBOARD</NavLink>
               {isAdmin() && (
@@ -100,7 +100,7 @@ export const Header = () => {
 
         {/* Desktop Actions - High-Tech Buttons */}
         <div className="hidden md:flex items-center" style={{ gap: '1.25rem' }}>
-          {isLoggedIn() ? (
+          {isSignedIn ? (
             <Dropdown
               trigger={
                 <div
@@ -121,15 +121,17 @@ export const Header = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1rem'
+                    fontSize: '1rem',
+                    color: '#fff',
+                    fontWeight: 700
                   }}>
-                    {user?.firstName?.charAt(0) || 'U'}
+                    {user?.name?.charAt(0) || clerkUser?.firstName?.charAt(0) || clerkUser?.primaryEmailAddress?.emailAddress?.charAt(0) || 'U'}
                   </div>
                   <span
                     className="font-bold tracking-wider"
                     style={{ color: '#fff', fontSize: '0.8rem' }}
                   >
-                    {user?.firstName?.toUpperCase()}
+                    {user?.name?.split(' ')[0]?.toUpperCase() || clerkUser?.firstName?.toUpperCase() || 'USER'}
                   </span>
                   <FiChevronDown
                     style={{ color: 'rgba(255,255,255,0.5)', width: '14px', height: '14px' }}
@@ -139,7 +141,7 @@ export const Header = () => {
               items={[
                 { label: '🛡️ PROFILE', onClick: () => navigate('/profile') },
                 { label: '⚙️ SETTINGS', onClick: () => navigate('/settings') },
-                { label: '🚪 DISCONNECT', onClick: logout },
+                { label: '🚪 LOGOUT', onClick: logout },
               ]}
             />
           ) : (
@@ -147,7 +149,7 @@ export const Header = () => {
               <Button
                 variant="ghost"
                 size="md"
-                onClick={() => (window.location.href = '/login')}
+                onClick={() => navigate('/login')}
                 style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 800, fontSize: '0.85rem' }}
               >
                 LOGIN
@@ -155,7 +157,7 @@ export const Header = () => {
               <Button
                 variant="neon"
                 size="md"
-                onClick={() => (window.location.href = '/signup')}
+                onClick={() => navigate('/signup')}
                 style={{ height: '44px', padding: '0 1.5rem', fontSize: '0.85rem' }}
               >
                 GET STARTED
@@ -203,7 +205,7 @@ export const Header = () => {
           <MobileLink to="/competitions" onClick={() => setMobileMenuOpen(false)}>
             EVENTS
           </MobileLink>
-          {isLoggedIn() && (
+          {isSignedIn && (
             <>
               <MobileLink to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
                 DASHBOARD
@@ -229,11 +231,11 @@ export const Header = () => {
                   cursor: 'pointer'
                 }}
               >
-                DISCONNECT
+                LOGOUT
               </button>
             </>
           )}
-          {!isLoggedIn() && (
+          {!isSignedIn && (
             <div
               style={{
                 display: 'flex',
@@ -245,7 +247,7 @@ export const Header = () => {
               <Button
                 variant="outline"
                 size="lg"
-                onClick={() => (window.location.href = '/login')}
+                onClick={() => navigate('/login')}
                 style={{ width: '100%' }}
               >
                 LOGIN
@@ -253,7 +255,7 @@ export const Header = () => {
               <Button
                 variant="neon"
                 size="lg"
-                onClick={() => (window.location.href = '/signup')}
+                onClick={() => navigate('/signup')}
                 style={{ width: '100%' }}
               >
                 SIGN UP

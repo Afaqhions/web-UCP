@@ -7,14 +7,17 @@ const Registration = require('../models/Registration');
 const Category = require('../models/Category');
 const Chat = require('../models/Chat');
 const Notification = require('../models/Notification');
+const PrizePool = require('../models/PrizePool');
 const emailService = require('../services/emailService');
 
 exports.getDashboardStats = catchAsync(async (req, res, next) => {
   const totalUsers = await User.countDocuments({ isActive: true });
-  const totalCompetitions = await Competition.countDocuments({ status: 'published' });
+  const totalCompetitions = await Competition.countDocuments();
   const totalRegistrations = await Registration.countDocuments();
   const totalCategories = await Category.countDocuments({ isActive: true });
-  const totalChats = await Chat.countDocuments({ isActive: true });
+  const prizePools = await PrizePool.find();
+  const totalPrizeAmount = prizePools.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+
   const pendingRegistrations = await Registration.countDocuments({ status: 'pending' });
   const activeUsers = await User.countDocuments({
     isActive: true,
@@ -28,7 +31,7 @@ exports.getDashboardStats = catchAsync(async (req, res, next) => {
       totalCompetitions,
       totalRegistrations,
       totalCategories,
-      totalChats,
+      totalPrizeAmount,
       pendingRegistrations,
       activeUsers,
     },
@@ -252,6 +255,116 @@ exports.sendSupportMessage = catchAsync(async (req, res, next) => {
     success: true,
     message: 'Message sent successfully',
     data: chat,
+  });
+});
+
+// Competition Management
+exports.getAllCompetitions = catchAsync(async (req, res, next) => {
+  const competitions = await Competition.find()
+    .populate('createdBy', 'name email')
+    .sort('-createdAt');
+
+  res.status(200).json({
+    success: true,
+    results: competitions.length,
+    data: competitions,
+  });
+});
+
+// Category Management
+exports.getAllCategories = catchAsync(async (req, res, next) => {
+  const categories = await Category.find().sort('name');
+  res.status(200).json({
+    success: true,
+    data: categories,
+  });
+});
+
+exports.createCategory = catchAsync(async (req, res, next) => {
+  const category = await Category.create(req.body);
+  res.status(201).json({
+    success: true,
+    data: category,
+  });
+});
+
+exports.updateCategory = catchAsync(async (req, res, next) => {
+  const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!category) {
+    return next(new AppError('Category not found', 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: category,
+  });
+});
+
+exports.deleteCategory = catchAsync(async (req, res, next) => {
+  const category = await Category.findByIdAndDelete(req.params.id);
+
+  if (!category) {
+    return next(new AppError('Category not found', 404));
+  }
+
+  res.status(204).json({
+    success: true,
+    data: null,
+  });
+});
+
+// Prize Pool Management
+exports.getAllPrizePools = catchAsync(async (req, res, next) => {
+  const prizePools = await PrizePool.find().sort('-createdAt');
+  res.status(200).json({
+    success: true,
+    results: prizePools.length,
+    data: prizePools,
+  });
+});
+
+exports.createPrizePool = catchAsync(async (req, res, next) => {
+  const prizePool = await PrizePool.create({
+    ...req.body,
+    createdBy: req.user._id
+  });
+
+  res.status(201).json({
+    success: true,
+    data: prizePool
+  });
+});
+
+exports.updatePrizePool = catchAsync(async (req, res, next) => {
+  const prizePool = await PrizePool.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true
+  });
+
+  if (!prizePool) {
+    return next(new AppError('Prize pool not found', 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: prizePool
+  });
+});
+
+exports.deletePrizePool = catchAsync(async (req, res, next) => {
+  const prizePool = await PrizePool.findByIdAndDelete(req.params.id);
+
+  if (!prizePool) {
+    return next(new AppError('Prize pool not found', 404));
+  }
+
+  res.status(204).json({
+    success: true,
+    data: null
   });
 });
 

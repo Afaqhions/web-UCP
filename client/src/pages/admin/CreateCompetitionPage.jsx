@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CompetitionForm } from '../../components/admin/CompetitionForm';
 import { Button } from '../../components/common/Button';
 import { FiArrowLeft } from 'react-icons/fi';
+import { competitionService } from '../../services/competitions';
+import { adminService } from '../../services/admin';
 
 const CreateCompetitionPage = () => {
     const navigate = useNavigate();
@@ -12,26 +14,36 @@ const CreateCompetitionPage = () => {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        const storedCats = JSON.parse(localStorage.getItem('categories_data')) || [];
-        if (storedCats.length > 0) {
-            setCategories(storedCats.map(cat => cat.name));
-        } else {
-            // Default fallback if no categories exist
-            setCategories(['Programming', 'Design', 'Photography', 'Videography', 'Writing', 'Gaming', 'Data Science']);
-        }
+        const fetchCategories = async () => {
+            try {
+                const response = await adminService.getCategories();
+                if (response.data && response.data.length > 0) {
+                    setCategories(response.data.map(cat => cat.name));
+                } else {
+                    setCategories(['Programming', 'Design', 'Photography', 'Videography', 'Writing', 'Gaming', 'Data Science']);
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+                setCategories(['Programming', 'Design', 'Photography', 'Videography', 'Writing', 'Gaming', 'Data Science']);
+            }
+        };
+        fetchCategories();
     }, []);
 
     const [initialData, setInitialData] = useState(null);
 
     useEffect(() => {
         if (isEditMode) {
-            const stored = JSON.parse(localStorage.getItem('competitions_data')) || [];
-            const found = stored.find(c => c.id === Number(id)); // Assuming ID is number
-            if (found) {
-                setInitialData(found);
-            } else {
-                navigate('/admin'); // Not found
-            }
+            const fetchComp = async () => {
+                try {
+                    const response = await competitionService.getCompetitionById(id);
+                    setInitialData(response.data);
+                } catch (error) {
+                    console.error('Error fetching competition:', error);
+                    navigate('/admin');
+                }
+            };
+            fetchComp();
         }
     }, [id, isEditMode, navigate]);
 
@@ -39,25 +51,18 @@ const CreateCompetitionPage = () => {
         navigate('/admin', { state: { activeTab: 1 } });
     };
 
-    const handleSubmit = (formData) => {
-        const existingComps = JSON.parse(localStorage.getItem('competitions_data')) || [];
-
-        if (isEditMode) {
-            // Update
-            const updatedComps = existingComps.map(c => c.id === Number(id) ? { ...c, ...formData } : c);
-            localStorage.setItem('competitions_data', JSON.stringify(updatedComps));
-        } else {
-            // Create
-            const newComp = {
-                id: Date.now(),
-                status: 'active',
-                registrationCount: 0,
-                ...formData
-            };
-            localStorage.setItem('competitions_data', JSON.stringify([newComp, ...existingComps]));
+    const handleSubmit = async (formData) => {
+        try {
+            if (isEditMode) {
+                await competitionService.updateCompetition(id, formData);
+            } else {
+                await competitionService.createCompetition(formData);
+            }
+            navigate('/admin', { state: { activeTab: 1 } });
+        } catch (error) {
+            console.error('Error saving competition:', error);
+            alert('Failed to save competition');
         }
-
-        navigate('/admin', { state: { activeTab: 1 } });
     };
 
     if (isEditMode && !initialData) return <div>Loading...</div>;

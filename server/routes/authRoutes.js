@@ -6,7 +6,7 @@ const { authLimiter } = require('../middleware/rateLimiter');
 const router = express.Router();
 
 // Webhook for Clerk user sync
-router.post('/sync-clerk-user', authLimiter, authController.syncClerkUser);
+router.post('/sync-clerk-user', authController.syncClerkUser);
 
 // Get current user
 router.get('/me', protect, authController.getCurrentUser);

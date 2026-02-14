@@ -75,4 +75,31 @@ export const adminService = {
     const response = await api.get('/admin/registrations/pending');
     return response.data;
   },
+
+  // Prize Pools
+  async getPrizePools() {
+    const response = await api.get('/admin/prizepools');
+    return response.data;
+  },
+
+  async createPrizePool(poolData) {
+    const response = await api.post('/admin/prizepools', poolData);
+    return response.data;
+  },
+
+  async updatePrizePool(id, poolData) {
+    const response = await api.put(`/admin/prizepools/${id}`, poolData);
+    return response.data;
+  },
+
+  async deletePrizePool(id) {
+    const response = await api.delete(`/admin/prizepools/${id}`);
+    return response.data;
+  },
+
+  // Dashboard
+  async getDashboardStats() {
+    const response = await api.get('/admin/dashboard/stats');
+    return response.data;
+  },
 };

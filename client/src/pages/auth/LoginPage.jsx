@@ -1,17 +1,6 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { LoginForm } from '../../components/auth/LoginForm';
+import { SignIn } from '@clerk/clerk-react';
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-
-  const handleLogin = async (formData) => {
-    await login(formData.email, formData.password);
-    navigate('/dashboard');
-  };
-
   return (
     <div
       style={{
@@ -41,8 +30,8 @@ const LoginPage = () => {
         }} />
       </div>
 
-      <div style={{ width: '100%', maxWidth: '480px', position: 'relative', zIndex: 10 }}>
-        <LoginForm onSubmit={handleLogin} />
+      <div style={{ position: 'relative', zIndex: 10 }}>
+        <SignIn signUpUrl="/signup" forceRedirectUrl="/dashboard" />
       </div>
     </div>
   );

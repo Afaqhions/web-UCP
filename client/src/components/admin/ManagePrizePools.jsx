@@ -5,26 +5,34 @@ import { Table } from '../common/Table';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { adminService } from '../../services/admin';
 
 export const ManagePrizePools = () => {
     const navigate = useNavigate();
     const [prizePools, setPrizePools] = useState([]);
 
     useEffect(() => {
-        const stored = localStorage.getItem('prizepools_data');
-        if (stored) {
-            setPrizePools(JSON.parse(stored));
-        } else {
-            setPrizePools([]);
-        }
+        const fetchPrizePools = async () => {
+            try {
+                const response = await adminService.getPrizePools();
+                setPrizePools(response.data);
+            } catch (error) {
+                console.error('Error fetching prize pools:', error);
+            }
+        };
+        fetchPrizePools();
     }, []);
 
     /* Removed Modal Logic */
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('Delete prize pool?')) {
-            const updated = prizePools.filter(p => p.id !== id);
-            setPrizePools(updated);
-            localStorage.setItem('prizepools_data', JSON.stringify(updated));
+            try {
+                await adminService.deletePrizePool(id);
+                setPrizePools(prizePools.filter(p => p._id !== id));
+            } catch (error) {
+                console.error('Error deleting prize pool:', error);
+                alert('Failed to delete prize pool');
+            }
         }
     };
 
@@ -38,8 +46,8 @@ export const ManagePrizePools = () => {
             key: 'actions',
             render: (row) => (
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <Button size="sm" variant="ghost" onClick={() => navigate(`/admin/prizepools/edit/${row.id}`)} style={{ color: '#3b82f6', padding: '0.4rem' }}><FiEdit2 size={16} /></Button>
-                    <Button size="sm" variant="ghost" onClick={() => handleDelete(row.id)} style={{ color: '#ef4444', padding: '0.4rem' }}><FiTrash2 size={16} /></Button>
+                    <Button size="sm" variant="ghost" onClick={() => navigate(`/admin/prizepools/edit/${row._id}`)} style={{ color: '#3b82f6', padding: '0.4rem' }}><FiEdit2 size={16} /></Button>
+                    <Button size="sm" variant="ghost" onClick={() => handleDelete(row._id)} style={{ color: '#ef4444', padding: '0.4rem' }}><FiTrash2 size={16} /></Button>
                 </div>
             ),
         },

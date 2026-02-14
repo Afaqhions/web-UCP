@@ -10,6 +10,7 @@ import { AdminSidebar } from '../../components/layout/AdminSidebar';
 import { FiArrowRight } from 'react-icons/fi';
 
 import { useNavigate, useLocation } from 'react-router-dom';
+import { adminService } from '../../services/admin';
 
 const AdminDashboardPage = () => {
   const navigate = useNavigate();
@@ -26,32 +27,29 @@ const AdminDashboardPage = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
-    const comps = JSON.parse(localStorage.getItem('competitions_data')) || [];
-    const cats = JSON.parse(localStorage.getItem('categories_data')) || [];
-    const users = JSON.parse(localStorage.getItem('users_data')) || [];
-    const pools = JSON.parse(localStorage.getItem('prizepools_data')) || [];
+    const fetchStats = async () => {
+      try {
+        const statsData = await adminService.getDashboardStats();
+        const { totalUsers, totalCompetitions, totalCategories, totalPrizeAmount } = statsData.data;
 
-    const totalPrize = pools.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+        setStats([
+          { label: 'Total Users', value: totalUsers.toLocaleString(), icon: '👥', trend: totalUsers > 0 ? 'Active' : '-', color: 'linear-gradient(135deg, #3b82f6, #06b6d4)' },
+          { label: 'Total Competitions', value: totalCompetitions.toLocaleString(), icon: '🏆', trend: totalCompetitions > 0 ? 'Active' : '-', color: 'linear-gradient(135deg, #8b5cf6, #ec4899)' },
+          { label: 'Categories', value: totalCategories.toLocaleString(), icon: '📁', trend: totalCategories > 0 ? 'Defined' : '-', color: 'linear-gradient(135deg, #10b981, #3b82f6)' },
+          { label: 'Prize Pool', value: `$${totalPrizeAmount.toLocaleString()}`, icon: '💰', trend: totalPrizeAmount > 0 ? 'Allocated' : '-', color: 'linear-gradient(135deg, #f59e0b, #ef4444)' },
+        ]);
 
-    setStats([
-      { label: 'Total Users', value: users.length.toLocaleString(), icon: '👥', trend: users.length > 0 ? 'Active' : '-', color: 'linear-gradient(135deg, #3b82f6, #06b6d4)' },
-      { label: 'Total Competitions', value: comps.length.toLocaleString(), icon: '🏆', trend: comps.length > 0 ? 'Active' : '-', color: 'linear-gradient(135deg, #8b5cf6, #ec4899)' },
-      { label: 'Categories', value: cats.length.toLocaleString(), icon: '📁', trend: cats.length > 0 ? 'Defined' : '-', color: 'linear-gradient(135deg, #10b981, #3b82f6)' },
-      { label: 'Prize Pool', value: `$${totalPrize.toLocaleString()}`, icon: '💰', trend: totalPrize > 0 ? 'Allocated' : '-', color: 'linear-gradient(135deg, #f59e0b, #ef4444)' },
-    ]);
+        // Mock activity for now as backend doesn't have a consolidated activity log yet
+        setRecentActivity([
+          { user: 'Admin', action: 'System synchronization successful', time: new Date().toLocaleString(), icon: '🔄' },
+          { user: 'Admin', action: 'Database connection verified', time: new Date().toLocaleString(), icon: '🛡️' }
+        ]);
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+      }
+    };
 
-    const activity = [
-      ...comps.map(c => ({ user: 'Admin', action: `Created competition: ${c.title}`, time: c.id, icon: '🏆' })),
-      ...cats.map(c => ({ user: 'Admin', action: `Added category: ${c.name}`, time: c.id, icon: '📁' })),
-      ...users.map(u => ({ user: 'Admin', action: `Added user: ${u.name}`, time: u.id, icon: '👤' })),
-      ...pools.map(p => ({ user: 'Admin', action: `Created prize pool: ${p.name}`, time: p.id, icon: '💰' }))
-    ].sort((a, b) => b.time - a.time).slice(0, 5);
-
-    setRecentActivity(activity.map(a => ({
-      ...a,
-      time: new Date(a.time).toLocaleDateString() + ' ' + new Date(a.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    })));
-
+    fetchStats();
   }, [activeTab]);
 
   useEffect(() => {

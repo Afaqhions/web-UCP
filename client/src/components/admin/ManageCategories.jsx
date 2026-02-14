@@ -4,26 +4,33 @@ import { Card } from '../common/Card';
 import { Table } from '../common/Table';
 import { Button } from '../common/Button';
 import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { adminService } from '../../services/admin';
 
 export const ManageCategories = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem('categories_data');
-    if (stored) {
-      setCategories(JSON.parse(stored));
-    } else {
-      setCategories([]);
-    }
+    const fetchCategories = async () => {
+      try {
+        const response = await adminService.getCategories();
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
   }, []);
 
   /* Removed Modal Logic */
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Delete this category?')) {
-      const updated = categories.filter(c => c.id !== id);
-      setCategories(updated);
-      localStorage.setItem('categories_data', JSON.stringify(updated));
+      try {
+        await adminService.deleteCategory(id);
+        setCategories(categories.filter(c => c._id !== id));
+      } catch (error) {
+        console.error('Error deleting category:', error);
+      }
     }
   };
 
